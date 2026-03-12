@@ -8,32 +8,32 @@ import { auth, db } from './firebase';
 import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
-const Navbar = ({ onBook, onLogin, user, isAdmin, onNavigate }: { 
-  onBook: () => void, 
-  onLogin: () => void, 
-  user: any, 
+const Navbar = ({ onBook, onLogin, user, isAdmin, onNavigate }: {
+  onBook: () => void,
+  onLogin: () => void,
+  user: any,
   isAdmin: boolean,
   onNavigate: (page: 'home' | 'admin') => void
 }) => (
   <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-6">
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       className="flex items-center gap-4 cursor-pointer"
       onClick={() => onNavigate('home')}
     >
       <div className="h-10 w-10 rounded-lg overflow-hidden border border-brand-cream/10">
-        <img 
-          src="/input_file_0.png" 
-          alt="Tim's Clips Logo" 
+        <img
+          src="/input_file_0.png"
+          alt="Tim's Clips Logo"
           className="h-full w-full object-cover"
           referrerPolicy="no-referrer"
         />
       </div>
       <span className="text-lg font-display font-bold tracking-tighter text-brand-cream">TIM'S CLIPS</span>
     </motion.div>
-    
-    <motion.div 
+
+    <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       className="flex items-center gap-8"
@@ -50,7 +50,7 @@ const Navbar = ({ onBook, onLogin, user, isAdmin, onNavigate }: {
         {user ? (
           <div className="flex items-center gap-4">
             {isAdmin && (
-              <button 
+              <button
                 onClick={() => onNavigate('admin')}
                 className="p-2 hover:bg-brand-burgundy/20 rounded-full text-brand-burgundy transition-colors"
                 title="Admin Dashboard"
@@ -58,7 +58,7 @@ const Navbar = ({ onBook, onLogin, user, isAdmin, onNavigate }: {
                 <ShieldCheck className="w-5 h-5" />
               </button>
             )}
-            <button 
+            <button
               onClick={() => signOut(auth)}
               className="flex items-center gap-2 text-sm text-brand-cream/40 hover:text-brand-cream"
             >
@@ -67,7 +67,7 @@ const Navbar = ({ onBook, onLogin, user, isAdmin, onNavigate }: {
             </button>
           </div>
         ) : (
-          <button 
+          <button
             onClick={onLogin}
             className="flex items-center gap-2 text-sm text-brand-cream/60 hover:text-brand-cream"
           >
@@ -75,7 +75,7 @@ const Navbar = ({ onBook, onLogin, user, isAdmin, onNavigate }: {
             <span>Login</span>
           </button>
         )}
-        <button 
+        <button
           onClick={onBook}
           className="bg-brand-burgundy text-brand-cream px-6 py-2 rounded-full text-sm font-bold hover:bg-brand-burgundy/80 transition-all"
         >
@@ -106,24 +106,23 @@ const Button = ({ children, className = "", variant = "primary", onClick }: { ch
       onClick={onClick}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      className={`group relative px-10 py-4 font-bold rounded-full overflow-hidden transition-all duration-300 ${
-        variant === "primary" 
-          ? "bg-brand-cream text-brand-black" 
+      className={`group relative px-10 py-4 font-bold rounded-full overflow-hidden transition-all duration-300 ${variant === "primary"
+          ? "bg-brand-cream text-brand-black"
           : "bg-transparent text-brand-cream border border-brand-cream/20"
-      } ${className}`}
+        } ${className}`}
     >
       {/* Cursor Proximity Glow */}
-      <div 
+      <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{
           background: `radial-gradient(circle 60px at ${mousePos.x}px ${mousePos.y}px, rgba(74, 14, 14, 0.4), transparent)`,
         }}
       />
-      
+
       <span className="relative z-10 flex items-center gap-2">
         {children}
       </span>
-      
+
       {/* Subtle Burgundy Border Glow on Hover */}
       <div className="absolute inset-0 rounded-full border border-brand-burgundy/0 group-hover:border-brand-burgundy/50 transition-colors duration-500" />
     </motion.button>
@@ -151,8 +150,8 @@ const Hero = ({ onBook }: { onBook: () => void }) => (
         Reserve Your Chair <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
       </Button>
     </motion.div>
-    
-    <motion.div 
+
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 1, duration: 1 }}
@@ -230,9 +229,9 @@ const Portfolio = () => {
               viewport={{ once: true }}
               className="group relative overflow-hidden rounded-[40px] aspect-[4/5] bg-brand-dark border border-brand-cream/5"
             >
-              <img 
-                src={img.src} 
-                alt={img.title} 
+              <img
+                src={img.src}
+                alt={img.title}
                 className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
                 referrerPolicy="no-referrer"
               />
@@ -276,9 +275,9 @@ const Footer = () => (
     <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
       <div className="flex items-center gap-4">
         <div className="h-10 w-10 rounded-lg overflow-hidden border border-brand-cream/10">
-          <img 
-            src="/input_file_0.png" 
-            alt="Tim's Clips Logo" 
+          <img
+            src="/input_file_0.png"
+            alt="Tim's Clips Logo"
             className="h-full w-full object-cover"
             referrerPolicy="no-referrer"
           />
@@ -291,7 +290,9 @@ const Footer = () => (
         <a href="#" className="hover:text-brand-cream transition-colors">Careers</a>
       </div>
       <div className="flex gap-6">
-        <Instagram className="w-5 h-5 text-brand-cream/20 hover:text-brand-burgundy transition-colors cursor-pointer" />
+        <a href="https://www.instagram.com/tims_clips_calvin/?igsh=c3k1MXpvazkxMWxh&utm_source=qr" target="_blank" rel="noopener noreferrer">
+          <Instagram className="w-5 h-5 text-brand-cream/20 hover:text-brand-burgundy transition-colors cursor-pointer" />
+        </a>
         <Twitter className="w-5 h-5 text-brand-cream/20 hover:text-brand-burgundy transition-colors cursor-pointer" />
         <Facebook className="w-5 h-5 text-brand-cream/20 hover:text-brand-burgundy transition-colors cursor-pointer" />
       </div>
@@ -339,8 +340,9 @@ export default function App() {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      alert(`Login failed: ${error.message} (Code: ${error.code})`);
     }
   };
 
@@ -355,14 +357,14 @@ export default function App() {
   return (
     <div className="min-h-screen font-sans selection:bg-brand-burgundy/30">
       <BackgroundEffects />
-      <Navbar 
-        onBook={handleBookClick} 
-        onLogin={handleLogin} 
-        user={user} 
+      <Navbar
+        onBook={handleBookClick}
+        onLogin={handleLogin}
+        user={user}
         isAdmin={isAdmin}
         onNavigate={setCurrentPage}
       />
-      
+
       {currentPage === 'home' ? (
         <main>
           <Hero onBook={handleBookClick} />
