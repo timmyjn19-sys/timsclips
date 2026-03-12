@@ -107,6 +107,9 @@ export const generateAvailableSlots = (
   // Last valid start time
   const lastValidStart = addMinutes(windowEnd, -durationMinutes);
 
+  const now = new Date();
+  const minAllowedStart = addMinutes(now, 15);
+
   let current = windowStart;
   while (isBefore(current, lastValidStart) || isEqual(current, lastValidStart)) {
     const slotStart = current;
@@ -121,7 +124,9 @@ export const generateAvailableSlots = (
     });
 
     if (overlapping.length < window.capacity) {
-      slots.push(format(current, 'HH:mm'));
+      if (isAfter(current, minAllowedStart) || isEqual(current, minAllowedStart)) {
+        slots.push(format(current, 'HH:mm'));
+      }
     }
 
     current = addMinutes(current, 15); // 15-minute increments

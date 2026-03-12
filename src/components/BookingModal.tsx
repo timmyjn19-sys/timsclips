@@ -10,7 +10,7 @@ import {
   Booking 
 } from '../services/bookingService';
 import { auth } from '../firebase';
-import { format, parse, addMinutes } from 'date-fns';
+import { format, parse, addMinutes, isAfter, isEqual } from 'date-fns';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -72,6 +72,18 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
 
   if (!isOpen) return null;
 
+  const now = new Date();
+  const minAllowedStart = addMinutes(now, 15);
+  const validWindows = windows.filter(w => {
+    try {
+      const windowEnd = parse(`${w.date} ${w.endTime}`, 'yyyy-MM-dd HH:mm', new Date());
+      const lastValidStart = addMinutes(windowEnd, -45); // Assuming 45 min duration
+      return isAfter(lastValidStart, minAllowedStart) || isEqual(lastValidStart, minAllowedStart);
+    } catch {
+      return false;
+    }
+  });
+
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -108,7 +120,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
                   <div>
                     <label className="block text-xs uppercase tracking-widest text-brand-cream/40 mb-4">Select a Date</label>
                     <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-                      {windows.map((w) => (
+                      {validWindows.map((w) => (
                         <button
                           key={w.id}
                           onClick={() => {
