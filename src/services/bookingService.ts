@@ -1,12 +1,12 @@
-import { 
-  collection, 
-  addDoc, 
-  query, 
-  where, 
-  getDocs, 
-  onSnapshot, 
-  doc, 
-  setDoc, 
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  onSnapshot,
+  doc,
+  setDoc,
   getDoc,
   Timestamp,
   orderBy,
@@ -95,9 +95,9 @@ export const getUserBookings = (userId: string, callback: (bookings: Booking[]) 
 
 // Logic to generate valid start times
 export const generateAvailableSlots = (
-  window: AvailabilityWindow, 
-  existingBookings: Booking[], 
-  durationMinutes: number = 45 // Default duration
+  window: AvailabilityWindow,
+  existingBookings: Booking[],
+  durationMinutes: number = 90 // Default duration
 ) => {
   const slots: string[] = [];
   const windowDate = parse(window.date, 'yyyy-MM-dd', new Date());
