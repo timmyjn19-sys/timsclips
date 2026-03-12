@@ -107,8 +107,8 @@ const Button = ({ children, className = "", variant = "primary", onClick }: { ch
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       className={`group relative px-10 py-4 font-bold rounded-full overflow-hidden transition-all duration-300 ${variant === "primary"
-          ? "bg-brand-cream text-brand-black"
-          : "bg-transparent text-brand-cream border border-brand-cream/20"
+        ? "bg-brand-cream text-brand-black"
+        : "bg-transparent text-brand-cream border border-brand-cream/20"
         } ${className}`}
     >
       {/* Cursor Proximity Glow */}
@@ -141,7 +141,7 @@ const Hero = ({ onBook }: { onBook: () => void }) => (
       </span>
       <h1 className="text-5xl md:text-8xl font-display font-bold tracking-tighter leading-[0.9] mb-8 text-balance text-brand-cream">
         Elite Quality. <br />
-        <span className="text-brand-burgundy">Without the $40 Pricetag.</span>
+        <span className="text-brand-burgundy">Without the Premium Price.</span>
       </h1>
       <p className="max-w-xl mx-auto text-lg md:text-xl text-brand-cream/50 leading-relaxed mb-12 text-balance">
         Just a clean cut tailored to your head shape. No rush, no fuss—just a personalized experience for every client.
@@ -263,7 +263,7 @@ const CTA = ({ onBook }: { onBook: () => void }) => (
         </Button>
         <div className="flex items-center gap-4 text-brand-cream/40">
           <MapPin className="w-5 h-5" />
-          <span>123 Barber St, Downtown</span>
+          <span>116 Bolt Hall(Calvin University)</span>
         </div>
       </div>
     </motion.div>
@@ -293,8 +293,6 @@ const Footer = () => (
         <a href="https://www.instagram.com/tims_clips_calvin/?igsh=c3k1MXpvazkxMWxh&utm_source=qr" target="_blank" rel="noopener noreferrer">
           <Instagram className="w-5 h-5 text-brand-cream/20 hover:text-brand-burgundy transition-colors cursor-pointer" />
         </a>
-        <Twitter className="w-5 h-5 text-brand-cream/20 hover:text-brand-burgundy transition-colors cursor-pointer" />
-        <Facebook className="w-5 h-5 text-brand-cream/20 hover:text-brand-burgundy transition-colors cursor-pointer" />
       </div>
     </div>
     <div className="text-center mt-12 text-[10px] uppercase tracking-widest text-brand-cream/10">
