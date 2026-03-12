@@ -3,9 +3,10 @@ import { motion } from 'motion/react';
 import { Scissors, Star, Clock, MapPin, ArrowRight, Instagram, Twitter, Facebook, LogIn, User, ShieldCheck } from 'lucide-react';
 import { BackgroundEffects } from './components/BackgroundEffects';
 import { BookingModal } from './components/BookingModal';
+import { LoginModal } from './components/LoginModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { auth, db } from './firebase';
-import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const Navbar = ({ onBook, onLogin, user, isAdmin, onNavigate }: {
@@ -302,6 +303,7 @@ const Footer = () => (
 );
 
 export default function App() {
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState<'home' | 'admin'>('home');
   const [user, setUser] = useState<any>(null);
@@ -321,7 +323,7 @@ export default function App() {
           await setDoc(doc(db, 'users', u.uid), {
             uid: u.uid,
             email: u.email,
-            displayName: u.displayName,
+            displayName: u.displayName || u.email?.split('@')[0] || 'User',
             role: role,
             createdAt: new Date().toISOString()
           });
@@ -334,19 +336,9 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-  const handleLogin = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (error: any) {
-      console.error(error);
-      alert(`Login failed: ${error.message} (Code: ${error.code})`);
-    }
-  };
-
   const handleBookClick = () => {
     if (!user) {
-      handleLogin();
+      setIsLoginOpen(true);
     } else {
       setIsBookingOpen(true);
     }
@@ -357,7 +349,7 @@ export default function App() {
       <BackgroundEffects />
       <Navbar
         onBook={handleBookClick}
-        onLogin={handleLogin}
+        onLogin={() => setIsLoginOpen(true)}
         user={user}
         isAdmin={isAdmin}
         onNavigate={setCurrentPage}
@@ -376,6 +368,7 @@ export default function App() {
 
       <Footer />
       <BookingModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </div>
   );
 }
