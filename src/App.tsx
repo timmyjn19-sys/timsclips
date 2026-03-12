@@ -24,7 +24,7 @@ const Navbar = ({ onBook, onLogin, user, isAdmin, onNavigate }: {
     >
       <div className="h-10 w-10 rounded-lg overflow-hidden border border-brand-cream/10">
         <img
-          src="/input_file_0.png"
+          src="./input_file_0.png"
           alt="Tim's Clips Logo"
           className="h-full w-full object-cover"
           referrerPolicy="no-referrer"
@@ -208,8 +208,8 @@ const ValueProp = () => {
 
 const Portfolio = () => {
   const images = [
-    { src: "/input_file_1.png", title: "Precision Taper" },
-    { src: "/input_file_2.png", title: "Tailored Texture" },
+    { src: "./input_file_1.png", title: "Precision Taper" },
+    { src: "./input_file_2.png", title: "Tailored Texture" },
   ];
 
   return (
@@ -276,7 +276,7 @@ const Footer = () => (
       <div className="flex items-center gap-4">
         <div className="h-10 w-10 rounded-lg overflow-hidden border border-brand-cream/10">
           <img
-            src="/input_file_0.png"
+            src="./input_file_0.png"
             alt="Tim's Clips Logo"
             className="h-full w-full object-cover"
             referrerPolicy="no-referrer"
