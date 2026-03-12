@@ -1,0 +1,60 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "client"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "AvailabilityWindow": {
+      "title": "Availability Window",
+      "description": "A time window where bookings can be made",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date" },
+        "startTime": { "type": "string", "description": "HH:mm format" },
+        "endTime": { "type": "string", "description": "HH:mm format" },
+        "capacity": { "type": "integer", "description": "Number of concurrent bookings allowed" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["date", "startTime", "endTime", "capacity"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "A haircut appointment",
+      "type": "object",
+      "properties": {
+        "windowId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "startTime": { "type": "string", "format": "date-time" },
+        "endTime": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["confirmed", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["windowId", "userId", "startTime", "endTime", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/availability": {
+      "schema": "AvailabilityWindow",
+      "description": "Admin defined availability windows"
+    },
+    "/bookings": {
+      "schema": "Booking",
+      "description": "User appointments"
+    }
+  }
+}
