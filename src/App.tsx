@@ -142,7 +142,7 @@ const Hero = ({ onBook }: { onBook: () => void }) => (
       </span>
       <h1 className="text-5xl md:text-8xl font-display font-bold tracking-tighter leading-[0.9] mb-8 text-balance text-brand-cream">
         Elite Quality. <br />
-        <span className="text-brand-burgundy">Without the Premium Price.</span>
+        <span className="text-brand-burgundy">For only $15.</span>
       </h1>
       <p className="max-w-xl mx-auto text-lg md:text-xl text-brand-cream/50 leading-relaxed mb-12 text-balance">
         Just a clean cut tailored to your head shape. No rush, no fuss—just a personalized experience for every client.
