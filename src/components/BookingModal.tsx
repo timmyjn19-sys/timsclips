@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Clock, CheckCircle2 } from 'lucide-react';
-import { 
-  getAvailabilityWindows, 
-  getBookingsForWindow, 
+import {
+  getAvailabilityWindows,
+  getBookingsForWindow,
   generateAvailableSlots,
   createBooking,
   AvailabilityWindow,
-  Booking 
+  Booking
 } from '../services/bookingService';
 import { auth } from '../firebase';
 import { format, parse, addMinutes, isAfter, isEqual } from 'date-fns';
@@ -51,7 +51,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
     setLoading(true);
     try {
       const start = parse(`${selectedWindow.date} ${selectedSlot}`, 'yyyy-MM-dd HH:mm', new Date());
-      const end = addMinutes(start, 45); // Fixed duration for now
+      const end = addMinutes(start, 90); // Fixed duration for now
 
       await createBooking({
         windowId: selectedWindow.id,
@@ -77,7 +77,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
   const validWindows = windows.filter(w => {
     try {
       const windowEnd = parse(`${w.date} ${w.endTime}`, 'yyyy-MM-dd HH:mm', new Date());
-      const lastValidStart = addMinutes(windowEnd, -45); // Assuming 45 min duration
+      const lastValidStart = addMinutes(windowEnd, -90); // Assuming 45 min duration
       return isAfter(lastValidStart, minAllowedStart) || isEqual(lastValidStart, minAllowedStart);
     } catch {
       return false;
@@ -87,21 +87,21 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
           className="absolute inset-0 bg-brand-black/80 backdrop-blur-sm"
         />
-        
+
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           className="relative w-full max-w-2xl bg-brand-dark border border-brand-cream/10 rounded-[40px] overflow-hidden shadow-2xl"
         >
-          <button 
+          <button
             onClick={onClose}
             className="absolute top-6 right-6 p-2 hover:bg-brand-cream/5 rounded-full transition-colors text-brand-cream/40 hover:text-brand-cream"
           >
@@ -127,11 +127,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
                             setSelectedWindow(w);
                             setSelectedSlot(null);
                           }}
-                          className={`flex-shrink-0 p-6 rounded-3xl border transition-all ${
-                            selectedWindow?.id === w.id 
-                              ? "bg-brand-burgundy border-brand-burgundy text-brand-cream" 
+                          className={`flex-shrink-0 p-6 rounded-3xl border transition-all ${selectedWindow?.id === w.id
+                              ? "bg-brand-burgundy border-brand-burgundy text-brand-cream"
                               : "bg-brand-cream/5 border-brand-cream/10 text-brand-cream/60 hover:border-brand-cream/20"
-                          }`}
+                            }`}
                         >
                           <Calendar className="w-5 h-5 mb-2" />
                           <div className="font-bold">{format(parse(w.date, 'yyyy-MM-dd', new Date()), 'MMM dd')}</div>
@@ -156,11 +155,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
                             <button
                               key={slot}
                               onClick={() => setSelectedSlot(slot)}
-                              className={`p-2 text-sm rounded-xl border transition-all ${
-                                selectedSlot === slot 
-                                  ? "bg-brand-cream text-brand-black border-brand-cream" 
+                              className={`p-2 text-sm rounded-xl border transition-all ${selectedSlot === slot
+                                  ? "bg-brand-cream text-brand-black border-brand-cream"
                                   : "bg-brand-cream/5 border-brand-cream/10 text-brand-cream/60 hover:border-brand-cream/20"
-                              }`}
+                                }`}
                             >
                               {slot}
                             </button>
@@ -197,7 +195,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
                     {selectedSlot}
                   </div>
                   <div className="text-brand-cream/40 text-sm mt-4">
-                    45 Minute Session
+                    90 Minute Max Session
                   </div>
                 </div>
                 <p className="text-brand-cream/60 mb-12">We've reserved your chair. A confirmation has been sent to your email.</p>

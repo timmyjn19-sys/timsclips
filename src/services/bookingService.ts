@@ -108,7 +108,7 @@ export const generateAvailableSlots = (
   const lastValidStart = addMinutes(windowEnd, -durationMinutes);
 
   const now = new Date();
-  const minAllowedStart = addMinutes(now, 15);
+  const minAllowedStart = addMinutes(now, 1440);
 
   let current = windowStart;
   while (isBefore(current, lastValidStart) || isEqual(current, lastValidStart)) {
