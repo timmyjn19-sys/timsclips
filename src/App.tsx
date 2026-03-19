@@ -319,8 +319,12 @@ export default function App() {
         if (userDoc.exists()) {
           const data = userDoc.data();
           setIsAdmin(data.role === 'admin');
-          // Treat missing status as approved to not break current actual users
-          setIsApproved(data.status === 'approved' || data.status === undefined || data.role === 'admin');
+          if (data.status === undefined && data.role !== 'admin') {
+            await setDoc(doc(db, 'users', u.uid), { status: 'pending' }, { merge: true });
+            setIsApproved(false);
+          } else {
+            setIsApproved(data.status === 'approved' || data.role === 'admin');
+          }
         } else {
           // Create user doc if it doesn't exist
           const role = u.email === 'timmyjn19@gmail.com' ? 'admin' : 'client';

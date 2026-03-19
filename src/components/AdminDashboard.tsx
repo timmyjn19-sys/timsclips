@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Trash2, Calendar, Clock, Users, Mail, ChevronDown, ChevronUp, CalendarDays, CheckCircle } from 'lucide-react';
+import { Plus, Trash2, Calendar, Clock, Users, Mail, ChevronDown, ChevronUp, CalendarDays, CheckCircle, X } from 'lucide-react';
 import { 
   createAvailabilityWindow, 
   getAvailabilityWindows, 
@@ -8,6 +8,7 @@ import {
   getAllBookings,
   getPendingUsers,
   approveUser,
+  updateBookingStatus,
   AppUser,
   AvailabilityWindow,
   Booking
@@ -78,6 +79,17 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleCancelBooking = async (bookingId: string) => {
+    if (window.confirm('Are you sure you want to cancel this booking?')) {
+      try {
+        await updateBookingStatus(bookingId, 'cancelled');
+      } catch (error) {
+        console.error(error);
+        alert('Error cancelling booking');
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-brand-black text-brand-cream p-8 pt-24">
       <div className="max-w-4xl mx-auto">
@@ -127,9 +139,16 @@ export const AdminDashboard: React.FC = () => {
                       <div className="text-brand-cream/20 text-sm italic mt-auto mb-auto text-center">No bookings</div>
                     ) : (
                       dayBookings.map(b => (
-                        <div key={b.id} className="bg-brand-burgundy/20 border border-brand-burgundy/30 rounded-lg p-2 text-xs">
+                        <div key={b.id} className="group relative bg-brand-burgundy/20 border border-brand-burgundy/30 rounded-lg p-2 text-xs">
+                          <button 
+                            onClick={() => handleCancelBooking(b.id)}
+                            className="absolute top-1 right-1 p-1 bg-brand-black/50 text-brand-cream/40 hover:text-red-500 rounded opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                            title="Cancel Booking"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
                           <div className="font-bold text-brand-cream">{format(parseISO(b.startTime), 'h:mm a')}</div>
-                          <div className="text-brand-cream/80 truncate" title={b.userName}>{b.userName}</div>
+                          <div className="text-brand-cream/80 truncate pr-4" title={b.userName}>{b.userName}</div>
                           {b.notes && <div className="text-brand-cream/40 mt-1 italic break-words">{b.notes}</div>}
                         </div>
                       ))
@@ -185,9 +204,19 @@ export const AdminDashboard: React.FC = () => {
                           <div key={b.id} className="bg-brand-cream/5 border border-brand-cream/10 rounded-xl p-3">
                             <div className="font-bold text-brand-cream">{format(parseISO(b.startTime), 'MMM d, yyyy')}</div>
                             <div className="text-brand-burgundy text-sm mb-2">{format(parseISO(b.startTime), 'h:mm a')}</div>
-                            <div className="text-xs text-brand-cream/40 uppercase tracking-widest inline-block px-2 py-1 bg-brand-cream/5 rounded-full mb-2">
+                            <div className={`text-xs uppercase tracking-widest inline-block px-2 py-1 rounded-full mb-2 ${
+                              b.status === 'confirmed' ? 'bg-brand-cream/5 text-brand-cream/40' : 'bg-red-500/10 text-red-500'
+                            }`}>
                               {b.status}
                             </div>
+                            {b.status === 'confirmed' && (
+                              <button 
+                                onClick={() => handleCancelBooking(b.id)}
+                                className="mt-1 text-[10px] text-brand-cream/40 hover:text-red-500 uppercase tracking-widest block transition-colors"
+                              >
+                                Cancel Booking
+                              </button>
+                            )}
                             {b.notes && (
                               <div className="text-sm text-brand-cream/60 italic bg-black/20 p-2 rounded-lg break-words">
                                 "{b.notes}"
