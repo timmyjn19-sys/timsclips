@@ -54,16 +54,21 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
       const start = parse(`${selectedWindow.date} ${selectedSlot}`, 'yyyy-MM-dd HH:mm', new Date());
       const end = addMinutes(start, 90); // Fixed duration for now
 
-      await createBooking({
+      const bookingData: Omit<Booking, 'id'> = {
         windowId: selectedWindow.id,
         userId: auth.currentUser.uid,
         userName: auth.currentUser.displayName || 'Anonymous',
         userEmail: auth.currentUser.email || '',
         startTime: start.toISOString(),
         endTime: end.toISOString(),
-        status: 'pending',
-        notes: notes.trim() !== '' ? notes.trim() : undefined
-      });
+        status: 'confirmed'
+      };
+
+      if (notes.trim()) {
+        bookingData.notes = notes.trim();
+      }
+
+      await createBooking(bookingData);
       setSuccess(true);
     } catch (error) {
       console.error(error);
