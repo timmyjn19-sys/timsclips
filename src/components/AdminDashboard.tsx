@@ -130,6 +130,7 @@ export const AdminDashboard: React.FC = () => {
                         <div key={b.id} className="bg-brand-burgundy/20 border border-brand-burgundy/30 rounded-lg p-2 text-xs">
                           <div className="font-bold text-brand-cream">{format(parseISO(b.startTime), 'h:mm a')}</div>
                           <div className="text-brand-cream/80 truncate" title={b.userName}>{b.userName}</div>
+                          {b.notes && <div className="text-brand-cream/40 mt-1 italic break-words">{b.notes}</div>}
                         </div>
                       ))
                     )}
@@ -184,9 +185,14 @@ export const AdminDashboard: React.FC = () => {
                           <div key={b.id} className="bg-brand-cream/5 border border-brand-cream/10 rounded-xl p-3">
                             <div className="font-bold text-brand-cream">{format(parseISO(b.startTime), 'MMM d, yyyy')}</div>
                             <div className="text-brand-burgundy text-sm mb-2">{format(parseISO(b.startTime), 'h:mm a')}</div>
-                            <div className="text-xs text-brand-cream/40 uppercase tracking-widest inline-block px-2 py-1 bg-brand-cream/5 rounded-full">
+                            <div className="text-xs text-brand-cream/40 uppercase tracking-widest inline-block px-2 py-1 bg-brand-cream/5 rounded-full mb-2">
                               {b.status}
                             </div>
+                            {b.notes && (
+                              <div className="text-sm text-brand-cream/60 italic bg-black/20 p-2 rounded-lg break-words">
+                                "{b.notes}"
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>

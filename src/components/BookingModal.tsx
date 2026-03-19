@@ -22,6 +22,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
   const [selectedWindow, setSelectedWindow] = useState<AvailabilityWindow | null>(null);
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
+  const [notes, setNotes] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -60,7 +61,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
         userEmail: auth.currentUser.email || '',
         startTime: start.toISOString(),
         endTime: end.toISOString(),
-        status: 'pending'
+        status: 'pending',
+        notes: notes.trim() !== '' ? notes.trim() : undefined
       });
       setSuccess(true);
     } catch (error) {
@@ -168,7 +170,23 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
                     </motion.div>
                   )}
 
-                  {/* Step 3: Confirm */}
+                  {/* Step 3: Add Notes */}
+                  {selectedSlot && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                    >
+                      <label className="block text-xs uppercase tracking-widest text-brand-cream/40 mb-4">Any special requests? (Optional)</label>
+                      <textarea
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        placeholder="E.g. Just a trim on top, keeping the length..."
+                        className="w-full bg-brand-cream/5 border border-brand-cream/10 rounded-xl p-4 text-brand-cream focus:outline-none focus:border-brand-burgundy/50 min-h-[100px] resize-none"
+                      />
+                    </motion.div>
+                  )}
+
+                  {/* Step 4: Confirm */}
                   <div className="pt-8">
                     <button
                       disabled={!selectedSlot || loading}
@@ -204,6 +222,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
                     setSuccess(false);
                     setSelectedWindow(null);
                     setSelectedSlot(null);
+                    setNotes('');
                     onClose();
                   }}
                   className="bg-brand-cream text-brand-black font-bold px-12 py-4 rounded-full hover:scale-105 transition-transform"

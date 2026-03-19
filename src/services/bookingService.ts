@@ -33,6 +33,7 @@ export interface Booking {
   startTime: string; // ISO string
   endTime: string; // ISO string
   status: 'pending' | 'confirmed' | 'cancelled';
+  notes?: string;
 }
 
 export interface AppUser {
