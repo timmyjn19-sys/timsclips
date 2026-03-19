@@ -6,7 +6,8 @@ import {
   signInWithPopup, 
   GoogleAuthProvider, 
   createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword 
+  signInWithEmailAndPassword,
+  updateProfile
 } from 'firebase/auth';
 
 interface LoginModalProps {
@@ -16,6 +17,7 @@ interface LoginModalProps {
 
 export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -47,7 +49,13 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
       setLoading(true);
       setError('');
       if (isSignUp) {
-        await createUserWithEmailAndPassword(auth, email, password);
+        if (!name.trim()) {
+          setError('Please enter your full name.');
+          setLoading(false);
+          return;
+        }
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName: name.trim() });
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
@@ -111,6 +119,22 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             )}
 
             <form onSubmit={handleEmailAuth} className="space-y-4 mb-6">
+              {isSignUp && (
+                <div>
+                  <label className="block text-xs uppercase tracking-widest text-brand-cream/40 mb-2">Full Name</label>
+                  <div className="relative">
+                    <UserPlus className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-brand-cream/20" />
+                    <input 
+                      type="text" 
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full bg-brand-cream/5 border border-brand-cream/10 rounded-2xl py-3 pl-12 pr-4 text-brand-cream focus:outline-none focus:border-brand-burgundy/50 transition-colors"
+                      placeholder="Tim Jenkins"
+                    />
+                  </div>
+                </div>
+              )}
+
               <div>
                 <label className="block text-xs uppercase tracking-widest text-brand-cream/40 mb-2">Email Address</label>
                 <div className="relative">

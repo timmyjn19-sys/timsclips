@@ -308,6 +308,7 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'admin'>('home');
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isApproved, setIsApproved] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
@@ -316,21 +317,28 @@ export default function App() {
         // Check for admin role
         const userDoc = await getDoc(doc(db, 'users', u.uid));
         if (userDoc.exists()) {
-          setIsAdmin(userDoc.data().role === 'admin');
+          const data = userDoc.data();
+          setIsAdmin(data.role === 'admin');
+          // Treat missing status as approved to not break current actual users
+          setIsApproved(data.status === 'approved' || data.status === undefined || data.role === 'admin');
         } else {
           // Create user doc if it doesn't exist
           const role = u.email === 'timmyjn19@gmail.com' ? 'admin' : 'client';
+          const status = role === 'admin' ? 'approved' : 'pending';
           await setDoc(doc(db, 'users', u.uid), {
             uid: u.uid,
             email: u.email,
             displayName: u.displayName || u.email?.split('@')[0] || 'User',
             role: role,
+            status: status,
             createdAt: new Date().toISOString()
           });
           setIsAdmin(role === 'admin');
+          setIsApproved(status === 'approved');
         }
       } else {
         setIsAdmin(false);
+        setIsApproved(false);
       }
     });
     return () => unsubscribe();
@@ -339,6 +347,8 @@ export default function App() {
   const handleBookClick = () => {
     if (!user) {
       setIsLoginOpen(true);
+    } else if (!isApproved && !isAdmin) {
+      alert('Your account is currently pending approval. Please wait for the admin to approve your sign up before booking.');
     } else {
       setIsBookingOpen(true);
     }

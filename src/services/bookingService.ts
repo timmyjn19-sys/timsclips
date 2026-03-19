@@ -10,7 +10,8 @@ import {
   getDoc,
   Timestamp,
   orderBy,
-  deleteDoc
+  deleteDoc,
+  updateDoc
 } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { format, parse, addMinutes, isBefore, isAfter, isEqual, startOfDay } from 'date-fns';
@@ -31,7 +32,16 @@ export interface Booking {
   userEmail: string;
   startTime: string; // ISO string
   endTime: string; // ISO string
-  status: 'confirmed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'cancelled';
+}
+
+export interface AppUser {
+  uid: string;
+  email: string;
+  displayName: string;
+  role: string;
+  status?: string;
+  createdAt: string;
 }
 
 export const createAvailabilityWindow = async (window: Omit<AvailabilityWindow, 'id'>) => {
@@ -80,9 +90,14 @@ export const createBooking = async (booking: Omit<Booking, 'id'>) => {
 };
 
 export const getBookingsForWindow = async (windowId: string) => {
-  const q = query(collection(db, 'bookings'), where('windowId', '==', windowId), where('status', '==', 'confirmed'));
+  const q = query(collection(db, 'bookings'), where('windowId', '==', windowId), where('status', 'in', ['confirmed', 'pending']));
   const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Booking));
+};
+
+export const updateBookingStatus = async (bookingId: string, status: 'confirmed' | 'cancelled') => {
+  const docRef = doc(db, 'bookings', bookingId);
+  return await updateDoc(docRef, { status });
 };
 
 export const getUserBookings = (userId: string, callback: (bookings: Booking[]) => void) => {
@@ -91,6 +106,27 @@ export const getUserBookings = (userId: string, callback: (bookings: Booking[]) 
     const bookings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Booking));
     callback(bookings);
   });
+};
+
+export const getAllBookings = (callback: (bookings: Booking[]) => void) => {
+  const q = query(collection(db, 'bookings'), orderBy('startTime', 'asc'));
+  return onSnapshot(q, (snapshot) => {
+    const bookings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Booking));
+    callback(bookings);
+  });
+};
+
+export const getPendingUsers = (callback: (users: AppUser[]) => void) => {
+  const q = query(collection(db, 'users'), where('status', '==', 'pending'));
+  return onSnapshot(q, (snapshot) => {
+    const users = snapshot.docs.map(doc => ({ ...doc.data() } as AppUser));
+    callback(users);
+  });
+};
+
+export const approveUser = async (uid: string) => {
+  const docRef = doc(db, 'users', uid);
+  return await updateDoc(docRef, { status: 'approved' });
 };
 
 // Logic to generate valid start times
@@ -108,7 +144,7 @@ export const generateAvailableSlots = (
   const lastValidStart = addMinutes(windowEnd, -durationMinutes);
 
   const now = new Date();
-  const minAllowedStart = addMinutes(now, 1440);
+  const minAllowedStart = addMinutes(now, 720);
 
   let current = windowStart;
   while (isBefore(current, lastValidStart) || isEqual(current, lastValidStart)) {

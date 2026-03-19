@@ -60,7 +60,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
         userEmail: auth.currentUser.email || '',
         startTime: start.toISOString(),
         endTime: end.toISOString(),
-        status: 'confirmed'
+        status: 'pending'
       });
       setSuccess(true);
     } catch (error) {
