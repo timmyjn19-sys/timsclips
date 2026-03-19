@@ -84,7 +84,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
   const validWindows = windows.filter(w => {
     try {
       const windowEnd = parse(`${w.date} ${w.endTime}`, 'yyyy-MM-dd HH:mm', new Date());
-      const lastValidStart = addMinutes(windowEnd, -90); // Assuming 45 min duration
+      const lastValidStart = addMinutes(windowEnd, -90); // Assuming 90 min duration
       return isAfter(lastValidStart, minAllowedStart) || isEqual(lastValidStart, minAllowedStart);
     } catch {
       return false;
@@ -135,8 +135,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
                             setSelectedSlot(null);
                           }}
                           className={`flex-shrink-0 p-6 rounded-3xl border transition-all ${selectedWindow?.id === w.id
-                              ? "bg-brand-burgundy border-brand-burgundy text-brand-cream"
-                              : "bg-brand-cream/5 border-brand-cream/10 text-brand-cream/60 hover:border-brand-cream/20"
+                            ? "bg-brand-burgundy border-brand-burgundy text-brand-cream"
+                            : "bg-brand-cream/5 border-brand-cream/10 text-brand-cream/60 hover:border-brand-cream/20"
                             }`}
                         >
                           <Calendar className="w-5 h-5 mb-2" />
@@ -163,8 +163,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
                               key={slot}
                               onClick={() => setSelectedSlot(slot)}
                               className={`p-2 text-sm rounded-xl border transition-all ${selectedSlot === slot
-                                  ? "bg-brand-cream text-brand-black border-brand-cream"
-                                  : "bg-brand-cream/5 border-brand-cream/10 text-brand-cream/60 hover:border-brand-cream/20"
+                                ? "bg-brand-cream text-brand-black border-brand-cream"
+                                : "bg-brand-cream/5 border-brand-cream/10 text-brand-cream/60 hover:border-brand-cream/20"
                                 }`}
                             >
                               {slot}

@@ -155,7 +155,8 @@ export const generateAvailableSlots = (
     // Check capacity
     const overlapping = existingBookings.filter(b => {
       const bStart = new Date(b.startTime);
-      const bEnd = new Date(b.endTime);
+      // Enforce the requested duration even if the database has old shorter bookings
+      const bEnd = addMinutes(bStart, durationMinutes);
       // Overlap logic: (StartA < EndB) and (EndA > StartB)
       return isBefore(slotStart, bEnd) && isAfter(slotEnd, bStart);
     });
