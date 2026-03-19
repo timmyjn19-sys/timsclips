@@ -142,7 +142,7 @@ export const generateAvailableSlots = (
   const windowEnd = parse(`${window.date} ${window.endTime}`, 'yyyy-MM-dd HH:mm', new Date());
 
   // Last valid start time
-  const lastValidStart = addMinutes(windowEnd, -durationMinutes);
+  const lastValidStart = addMinutes(windowEnd, durationMinutes);
 
   const now = new Date();
   const minAllowedStart = addMinutes(now, 720);
