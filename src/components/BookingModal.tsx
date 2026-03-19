@@ -80,11 +80,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
   if (!isOpen) return null;
 
   const now = new Date();
-  const minAllowedStart = addMinutes(now, 15);
+  const minAllowedStart = addMinutes(now, 720);
   const validWindows = windows.filter(w => {
     try {
       const windowEnd = parse(`${w.date} ${w.endTime}`, 'yyyy-MM-dd HH:mm', new Date());
-      const lastValidStart = addMinutes(windowEnd, -90); // Assuming 90 min duration
+      const lastValidStart = addMinutes(windowEnd, 90); // Assuming 90 min duration
       return isAfter(lastValidStart, minAllowedStart) || isEqual(lastValidStart, minAllowedStart);
     } catch {
       return false;
