@@ -70,6 +70,20 @@ export const createBooking = async (booking: Omit<Booking, 'id'>) => {
     createdAt: new Date().toISOString()
   });
 
+  // Decrement capacity
+  try {
+    const windowRef = doc(db, 'availability', booking.windowId);
+    const windowSnap = await getDoc(windowRef);
+    if (windowSnap.exists()) {
+      const currentCapacity = windowSnap.data().capacity || 0;
+      if (currentCapacity > 0) {
+        await updateDoc(windowRef, { capacity: currentCapacity - 1 });
+      }
+    }
+  } catch (error) {
+    console.error('Failed to decrement capacity:', error);
+  }
+
   // Send to webhook
   try {
     await fetch('https://hook.us2.make.com/ymqk7tlo9x3397h3knkssycwkvkcyr9n', {
@@ -98,6 +112,24 @@ export const getBookingsForWindow = async (windowId: string) => {
 
 export const updateBookingStatus = async (bookingId: string, status: 'confirmed' | 'cancelled') => {
   const docRef = doc(db, 'bookings', bookingId);
+  const snap = await getDoc(docRef);
+  
+  if (snap.exists() && status === 'cancelled') {
+    const data = snap.data() as Booking;
+    if (data.status !== 'cancelled') {
+      try {
+        const windowRef = doc(db, 'availability', data.windowId);
+        const windowSnap = await getDoc(windowRef);
+        if (windowSnap.exists()) {
+          const currentCapacity = windowSnap.data().capacity || 0;
+          await updateDoc(windowRef, { capacity: currentCapacity + 1 });
+        }
+      } catch (error) {
+        console.error('Failed to increment capacity:', error);
+      }
+    }
+  }
+
   return await updateDoc(docRef, { status });
 };
 
@@ -137,12 +169,15 @@ export const generateAvailableSlots = (
   durationMinutes: number = 90 // Default duration
 ) => {
   const slots: string[] = [];
+  
+  if (window.capacity <= 0) return slots;
+
   const windowDate = parse(window.date, 'yyyy-MM-dd', new Date());
   const windowStart = parse(`${window.date} ${window.startTime}`, 'yyyy-MM-dd HH:mm', new Date());
   const windowEnd = parse(`${window.date} ${window.endTime}`, 'yyyy-MM-dd HH:mm', new Date());
 
   // Last valid start time
-  const lastValidStart = addMinutes(windowEnd, durationMinutes);
+  const lastValidStart = addMinutes(windowEnd, -durationMinutes);
 
   const now = new Date();
   const minAllowedStart = addMinutes(now, 720);
@@ -152,7 +187,7 @@ export const generateAvailableSlots = (
     const slotStart = current;
     const slotEnd = addMinutes(current, durationMinutes);
 
-    // Check capacity
+    // Check overlaps (strict no-overlap policy because 1 barber)
     const overlapping = existingBookings.filter(b => {
       const bStart = new Date(b.startTime);
       // Enforce the requested duration even if the database has old shorter bookings
@@ -161,7 +196,7 @@ export const generateAvailableSlots = (
       return isBefore(slotStart, bEnd) && isAfter(slotEnd, bStart);
     });
 
-    if (overlapping.length < window.capacity) {
+    if (overlapping.length === 0) {
       if (isAfter(current, minAllowedStart) || isEqual(current, minAllowedStart)) {
         slots.push(format(current, 'HH:mm'));
       }
